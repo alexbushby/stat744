@@ -88,3 +88,4 @@ print(gg3)
 ##I decided to make the outliers for the boxplots a different shape and colour to make them more obvious.
 ##Also, somehow I managed to make the fill of the boxplot white, so you can't see the points the occur in the boxplot. How do I reverse this?
 ##   BMB: either use fill=NA (as above) *or* change the order of the geoms
+
