@@ -1,0 +1,62 @@
+---
+title: "hw4"
+author: "Alexandra Bushby"
+date: "2/9/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+## graphics
+library(ggplot2)
+theme_set(theme_bw()+theme(panel.spacing=grid::unit(0,"lines")))
+library(directlabels)
+## modeling/coef plots
+library(lme4)
+library(broom)
+library(dotwhisker)
+library(ggstance) ## horizontal geoms
+## manipulation
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(readr)
+library(cowplot)
+library(directlabels)
+```
+
+The data I am using I got from Statistics Canada. This data is the incidence of cancers in various provinces from 2011 to 2015. 
+
+```{r}
+data<-read.csv("cancer.csv")
+
+names(data)<-c("Geography", "Characteristics", "2011", "2012", "2013", "2014", "2015")
+
+data[9,1]<-"Ontario" ##cleaning up data
+
+data$Characteristics <- as.character(data$Characteristics)
+
+data$Characteristics[data$Characteristics == "Cancer incidence (rate per 100,000 population) (24)"] <- "Incidence"
+
+data<-data[which(data$Characteristics == "Incidence"),]
+
+data$Characteristics <- NULL
+
+data1<- data %>% 
+  gather(Year, Cases, -Geography)
+
+```
+
+```{r}
+gg1<-( ggplot(data1, aes(Year, Cases, col=Geography)) +
+        geom_point() + 
+        geom_line(data=data1,aes(group=Geography)) + 
+        geom_dl(aes(label=Geography), method = list("last.points")) + 
+         theme(legend.position="none") + 
+         labs(x="Year", y="Incidence (per 100,000)")
+)
+plot(gg1)
+```
+
+I would say this graph is much better than the data provided. It is immediately clear which provinces have a low incidence of cancer and which provinces have a high incidence of cancer. One would not be able to gather this information in a reasonable amount of time from reading the graph. Another thing that is obvious from the graph that wouldn't be obvious from the data is that there isn't much change in the incidence across provinces. 
+
+I was wondering how I could spread the names out so they aren't overlapping? Could you help me with that?
