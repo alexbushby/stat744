@@ -24,26 +24,13 @@ library(cowplot)
 library(directlabels)
 ```
 
-<<<<<<< Updated upstream
-The data I am using I got from Statistics Canada. This data is the incidence of cancers in various provinces from 2011 to 2015. 
-
-```{r}
-data<-read.csv("cancer.csv")
-
-names(data)<-c("Geography", "Characteristics", "2011", "2012", "2013", "2014", "2015")
-
-data[9,1]<-"Ontario" ##cleaning up data
-
-data$Characteristics <- as.character(data$Characteristics)
-
-=======
 The data I am using I got from Statistics Canada. This data is the incidence of cancers in various provinces from 2011 to 2015.
 
 **BMB**:
 
 - were these data presented in a table originally? (that was the intent of the assignment - but drawing graphs is still good) 
 
-BMB: it's best practice to give your chunks names
+BMB: it's best practice to name your chunks (so you can tell which ones fail/take a long time/etc.)
 
 ```{r get_data,echo=FALSE,eval=FALSE}
 ## BMB: style is a personal preference. Most style guides use spaces around the assignment operator
@@ -51,32 +38,15 @@ data <- read.csv("cancer.csv",check.names=FALSE)
 ## BMB: unnecessary if you use check.names=FALSE (or readr::read_csv, which by default *doesn't* convert names)
 ## BMB: best to avoid names of built-in functions ('data') for variable names
 ##names(data) <- c("Geography", "Characteristics", "2011", "2012", "2013", "2014", "2015")
-
-## BMB:
+## BMB: I prefer to have code more compact (no extra lines) so I can
+##   see more lines on the screen, but again this is just preference
 data[9,1]<-"Ontario" ##cleaning up data
-
 data$Characteristics <- as.character(data$Characteristics)
->>>>>>> Stashed changes
 data$Characteristics[data$Characteristics == "Cancer incidence (rate per 100,000 population) (24)"] <- "Incidence"
-
-data<-data[which(data$Characteristics == "Incidence"),]
-
+data <- data[which(data$Characteristics == "Incidence"),]
 data$Characteristics <- NULL
-
-data1<- data %>% 
+data1 <- data %>% 
   gather(Year, Cases, -Geography)
-<<<<<<< Updated upstream
-
-```
-
-```{r}
-gg1<-( ggplot(data1, aes(Year, Cases, col=Geography)) +
-        geom_point() + 
-        geom_line(data=data1,aes(group=Geography)) + 
-        geom_dl(aes(label=Geography), method = list("last.points")) + 
-         theme(legend.position="none") + 
-         labs(x="Year", y="Incidence (per 100,000)")
-=======
 ```
 
 BMB: a more efficient pipeline -
@@ -121,16 +91,12 @@ gg1 <- (ggplot(data2, aes(Year, Cases, colour=Region, group=Geography))
     + labs(x="Year", y="Incidence (per 100,000)")
     + scale_x_continuous(breaks=2011:2015,limits=c(2011,2018))
     + scale_colour_brewer(palette="Dark2")
->>>>>>> Stashed changes
 )
 plot(gg1)
 ```
 
 I would say this graph is much better than the data provided. It is immediately clear which provinces have a low incidence of cancer and which provinces have a high incidence of cancer. One would not be able to gather this information in a reasonable amount of time from reading the graph. Another thing that is obvious from the graph that wouldn't be obvious from the data is that there isn't much change in the incidence across provinces. 
 
-<<<<<<< Updated upstream
-I was wondering how I could spread the names out so they aren't overlapping? Could you help me with that?
-=======
 I was wondering how I could spread the names out so they aren't overlapping? Could you help me with that?
 
 BMB:
@@ -140,4 +106,3 @@ BMB:
 - questions about data/interpretation: is this for all types of cancers? It surprises me that there's such a huge range of incidence across regions: also, seems to cluster in larger regions (Atlantic Canada is highest, the north is lowest). Does this have to with reporting? Occupational exposure? Other causes of mortality intervening?
 - to emphasize this, I added information about region and coloured the lines accordingly (could have left BC with the other Western provinces, I guess)
 - where's Quebec?
->>>>>>> Stashed changes
