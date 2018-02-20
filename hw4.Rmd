@@ -24,6 +24,7 @@ library(cowplot)
 library(directlabels)
 ```
 
+<<<<<<< Updated upstream
 The data I am using I got from Statistics Canada. This data is the incidence of cancers in various provinces from 2011 to 2015. 
 
 ```{r}
@@ -35,6 +36,27 @@ data[9,1]<-"Ontario" ##cleaning up data
 
 data$Characteristics <- as.character(data$Characteristics)
 
+=======
+The data I am using I got from Statistics Canada. This data is the incidence of cancers in various provinces from 2011 to 2015.
+
+**BMB**:
+
+- were these data presented in a table originally? (that was the intent of the assignment - but drawing graphs is still good) 
+
+BMB: it's best practice to give your chunks names
+
+```{r get_data,echo=FALSE,eval=FALSE}
+## BMB: style is a personal preference. Most style guides use spaces around the assignment operator
+data <- read.csv("cancer.csv",check.names=FALSE)
+## BMB: unnecessary if you use check.names=FALSE (or readr::read_csv, which by default *doesn't* convert names)
+## BMB: best to avoid names of built-in functions ('data') for variable names
+##names(data) <- c("Geography", "Characteristics", "2011", "2012", "2013", "2014", "2015")
+
+## BMB:
+data[9,1]<-"Ontario" ##cleaning up data
+
+data$Characteristics <- as.character(data$Characteristics)
+>>>>>>> Stashed changes
 data$Characteristics[data$Characteristics == "Cancer incidence (rate per 100,000 population) (24)"] <- "Incidence"
 
 data<-data[which(data$Characteristics == "Incidence"),]
@@ -43,6 +65,7 @@ data$Characteristics <- NULL
 
 data1<- data %>% 
   gather(Year, Cases, -Geography)
+<<<<<<< Updated upstream
 
 ```
 
@@ -53,10 +76,68 @@ gg1<-( ggplot(data1, aes(Year, Cases, col=Geography)) +
         geom_dl(aes(label=Geography), method = list("last.points")) + 
          theme(legend.position="none") + 
          labs(x="Year", y="Incidence (per 100,000)")
+=======
+```
+
+BMB: a more efficient pipeline -
+```{r get_data2,message=FALSE}
+inc_lab <- "Cancer incidence (rate per 100,000 population) (24)"
+data1 <- read_csv("cancer.csv") %>%
+    mutate(Geography=trimws(Geography)) %>%
+    filter(Characteristics==inc_lab) %>%
+    select(-Characteristics) %>%
+    gather(Year, Cases, -Geography, convert=TRUE)
+```
+
+```{r region_dat}
+region_dat <- read_csv(file="
+Geography,Region
+Newfoundland and Labrador,Atlantic
+Nova Scotia,Atlantic
+Prince Edward Island,Atlantic
+New Brunswick,Atlantic
+Ontario,Ontario
+British Columbia,British Columbia
+Manitoba,Prairie
+Saskatchewan,Prairie
+Alberta,Prairie
+Yukon,North
+Northwest Territories,North
+Nunavut,North
+")
+data2 <- data1 %>% full_join(region_dat,by="Geography")
+```
+
+```{r plot}
+## BMB: if you put parentheses at the beginning (as you have),
+##   you can put + signs at the beginnings of lines -- makes it
+##   easier to add/remove/comment out lines
+gg1 <- (ggplot(data2, aes(Year, Cases, colour=Region, group=Geography))
+    + geom_point()
+    + geom_line()
+    + geom_dl(aes(label=Geography),
+              method = list(dl.trans(x=x+0.2),"last.qp"))
+    + theme(legend.position="none")
+    + labs(x="Year", y="Incidence (per 100,000)")
+    + scale_x_continuous(breaks=2011:2015,limits=c(2011,2018))
+    + scale_colour_brewer(palette="Dark2")
+>>>>>>> Stashed changes
 )
 plot(gg1)
 ```
 
 I would say this graph is much better than the data provided. It is immediately clear which provinces have a low incidence of cancer and which provinces have a high incidence of cancer. One would not be able to gather this information in a reasonable amount of time from reading the graph. Another thing that is obvious from the graph that wouldn't be obvious from the data is that there isn't much change in the incidence across provinces. 
 
+<<<<<<< Updated upstream
 I was wondering how I could spread the names out so they aren't overlapping? Could you help me with that?
+=======
+I was wondering how I could spread the names out so they aren't overlapping? Could you help me with that?
+
+BMB:
+
+- for positioning, see `?last.bumpup`, `?last.qp`. Also, `dl_trans()` gives a little more space between the endpoints and the labels
+- The only disadvantage to this layout (that I can see) is that the year-to-year differences are swamped by the between-region differences. There are a variety of different ways to handle this (split into facets according to incidence category; split into all separate facets; normalize incidence by starting incidence ...)
+- questions about data/interpretation: is this for all types of cancers? It surprises me that there's such a huge range of incidence across regions: also, seems to cluster in larger regions (Atlantic Canada is highest, the north is lowest). Does this have to with reporting? Occupational exposure? Other causes of mortality intervening?
+- to emphasize this, I added information about region and coloured the lines accordingly (could have left BC with the other Western provinces, I guess)
+- where's Quebec?
+>>>>>>> Stashed changes
