@@ -4,5 +4,11 @@ library(igraph)
 g <- erdos.renyi.game(10,0.3)
 plot.igraph(g)
 
+
+
 ##I'm looking at this graph and I'm not sure what information this can tell me
 ##Also, how do I print the adjacency matrix? 
+
+## JD: Did you try google?
+
+print(as_adjacency_matrix(g))
